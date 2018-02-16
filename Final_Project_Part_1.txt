@@ -1,0 +1,39 @@
+PITCH 1: Health Insurance Exchange Public Use Files (PUF's)
+Purpose: Investigate whether the cost of medical coverage is influenced by race or income level.
+Data: Latest PUF data (2018 plan year). Medical plans (QHP's) only, no dental (SADP's).
+Set up a linear regression model to predict cost of coverage given attributes including:
+	Plan provisions (deductibles, maximums, etc.)
+	Demographics (Age, tobacco use)
+	Coverage level (single, family, etc.)
+	Geographic location (zip code) -- See further notes.
+This will primarily make use of the plan-level PUF's:
+	Rate
+	Plan Attributes
+	Business Rules
+There are probably too many zip codes to use as a categorical variable.
+I'd like to bring in external census data with racial makeup and median income by area code.
+The goal would be to substitute the zip code field with a field for racial diversity by zip and a field for median income by zip.
+Ultimately, the goal is to understand the relationship between race and income on cost of medical coverage.
+
+PITCH 2: Chicago Bike Share (Divvy) Data
+Divvy station and individual trip information going back to 2013 can be found here:
+<https://www.divvybikes.com/system-data>
+The goal here is to predict the "bike differential" for a given station for a given hour.
+	Every trip started from the station is a bike "removed".
+	Every trip ended at the station is a bike "added".
+In addition to predicting based on date and time of day, external data regarding Chicago weather could be brought in.
+I'd like to be able to use the station location data (latitude and longitude) to plot the stations on a map in Tableau.
+The user could pick a date and then it would should the predicted differential for each station over the course of that day.
+I have a Tableau license that I could put to use for that.
+
+PITCH 3: Chicago Bike Share (Divvy) Data
+Divvy station and individual trip information going back to 2013 can be found here:
+<https://www.divvybikes.com/system-data>
+I'd like to attempt to write a script that does the following for each trip:
+	1) Input the start station and end station latitude and longitude into Google Maps as start and end points for a trip
+	2) Pull in the WALKING directions returned for that trip
+	3) This will provide the most direct route for each station combination that avoids highways
+	4) Plot the routes on a map in Tableau to show frequency
+	5) Overlay that map with the bike routes currently existing in Chicago
+This will show, based on Divvy usage, where we new bike routes would be most useful to directly link the most popular bike start and end points.
+
