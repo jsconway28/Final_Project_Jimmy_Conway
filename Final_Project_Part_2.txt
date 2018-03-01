@@ -1,0 +1,69 @@
+I have selected PITCH 2: Chicago Bike Share (Divvy) Data.
+
+There are two data sources for this:
+   1)	Divvy station and individual trip information going back to the inception of the program in 2013.
+	Found here: <https://www.divvybikes.com/system-data>
+	Each row of the data represents one trip. The fields to be used include:
+		Trip start date/time
+		Trip end date/time
+		Trip start station ID
+		Trip end station ID
+   2)	Weather data retrieved from NOAA. There are two types of data used:
+		Local Climatological Data (LCD) for the Midway Airport station from 2013 through 2017.
+			Midway was chosen for being the most centrally located of the available weather stations.
+			From this data, the hourly "dry bulb" temperature, wind speed, and precipitation will be used.
+		"Normals" data based averages for the Midway Airport station over the period from 1981-2010.
+			I am planning to only use the daily normal average temperature.
+			I am using this in lieu of a date or season variable.
+			Average temperature is numeric instead of categorical and avoids reliance on arbitrary cutoffs.
+
+Divvy Data Exclusions:
+	Trips where there is not a valid starting and ending date/time. 
+	Trips where there is not a valid starting and ending station ID.
+	Trips where the starting and ending station ID are the same.
+I am hoping that there will be no need to exclude any weather data but will validate this.
+
+The first task will be to set "time buckets".
+I will create histograms of the total number of rides across all stations and years with 24 buckets, one for each hour of the day.
+There will be one histogram for each day of the week.
+For example, the "Monday" histogram shows how many total rides started on Mondays from 12:00 - 1:00am, 1:00am - 2:00am, etc.
+I will repeat the process using ride end times instead of start times, but expect the results to be the same.
+
+The purpose of these histograms is to set a "time buckets" variable. The buckets do not necessarily need to be the same length.
+The buckets should capture trends in use behavior.
+I hypothesize the buckets might look something like:
+	Weekday morning
+	Weekday afternoon
+	Weekday evening
+	Weekday night
+	Weekend day
+	Weekend night
+This categorical variable will be used in place of day and time.
+
+The model will predict the "Bike Differential".
+Bike Differential is defined as:
+	[number of rides ending at the station in the time bucket] - [number of rides beginning at the station in the time bucket]
+Input variables include:
+	Station ID*
+	Time bucket
+	Average temperature during time bucket
+	Average wind speed during time bucket
+	Total precipitation during time bucket
+	(I'll play around with adding more of the hourly local weather data, such as barometric pressure, humidity, and dew point.)
+	Normal daily average temperature
+
+*There will be one linear regression model fit for each station.
+Stations behave completely differently from each other.
+For example, downtown stations RECEIVE many bikes on weekday mornings, while residential stations LOSE them.
+Stations included in this will be those active as of 12/31/2017 that had been active since at least 7/7/2016 (last batch of 2016 stations to go live).
+
+It is conceivable that the betas for the weather-related inputs could be set on the data as a whole, as one would expect stations to react similarly to them.
+I will have to look into whether such blending of betas (individually set by station vs. set universally) is possible.
+
+Finally, I'm hoping to present the data using a map in Tableau.
+There is a separate table for station data that includes the latitude and longitude of each that should be easy to read into a map.
+The user inputs all input variables above except for station ID.
+The tableau map is populated with one dot for each station.
+The station dots are the color graded with the results of the model: red for negative differential, white for zero, green for positive differential.
+
+
