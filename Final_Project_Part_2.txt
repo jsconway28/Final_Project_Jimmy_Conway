@@ -1,6 +1,6 @@
 I have selected PITCH 2: Chicago Bike Share (Divvy) Data.
 
-There are two data sources for this:
+Two data sources will be used:
    1)	Divvy station and individual trip information going back to the inception of the program in 2013.
 	Found here: <https://www.divvybikes.com/system-data>
 	Each row of the data represents one trip. The fields to be used include:
@@ -12,7 +12,7 @@ There are two data sources for this:
 		Local Climatological Data (LCD) for the Midway Airport station from 2013 through 2017.
 			Midway was chosen for being the most centrally located of the available weather stations.
 			From this data, the hourly "dry bulb" temperature, wind speed, and precipitation will be used.
-		"Normals" data based averages for the Midway Airport station over the period from 1981-2010.
+		"Normals" data for the Midway Airport station: Averages over the period from 1981-2010.
 			I am planning to only use the daily normal average temperature.
 			I am using this in lieu of a date or season variable.
 			Average temperature is numeric instead of categorical and avoids reliance on arbitrary cutoffs.
@@ -26,11 +26,11 @@ I am hoping that there will be no need to exclude any weather data but will vali
 The first task will be to set "time buckets".
 I will create histograms of the total number of rides across all stations and years with 24 buckets, one for each hour of the day.
 There will be one histogram for each day of the week.
-For example, the "Monday" histogram shows how many total rides started on Mondays from 12:00 - 1:00am, 1:00am - 2:00am, etc.
+For example, the "Monday" histogram shows how many total rides started on Mondays from 12:00am - 1:00am, 1:00am - 2:00am, etc.
 I will repeat the process using ride end times instead of start times, but expect the results to be the same.
 
 The purpose of these histograms is to set a "time buckets" variable. The buckets do not necessarily need to be the same length.
-The buckets should capture trends in use behavior.
+The buckets should capture the weekly pattern in use behavior.
 I hypothesize the buckets might look something like:
 	Weekday morning
 	Weekday afternoon
@@ -38,22 +38,23 @@ I hypothesize the buckets might look something like:
 	Weekday night
 	Weekend day
 	Weekend night
-This categorical variable will be used in place of day and time.
+This categorical variable will be used in place of day and time in the model.
 
 The model will predict the "Bike Differential".
 Bike Differential is defined as:
 	[number of rides ending at the station in the time bucket] - [number of rides beginning at the station in the time bucket]
+
 Input variables include:
 	Station ID*
-	Time bucket
+	Time bucket (day/time proxy)
 	Average temperature during time bucket
 	Average wind speed during time bucket
 	Total precipitation during time bucket
 	(I'll play around with adding more of the hourly local weather data, such as barometric pressure, humidity, and dew point.)
-	Normal daily average temperature
+	Normal daily average temperature (date/season proxy)
 
 *There will be one linear regression model fit for each station.
-Stations behave completely differently from each other.
+This is necessary because stations behave completely differently from each other.
 For example, downtown stations RECEIVE many bikes on weekday mornings, while residential stations LOSE them.
 Stations included in this will be those active as of 12/31/2017 that had been active since at least 7/7/2016 (last batch of 2016 stations to go live).
 
@@ -64,6 +65,18 @@ Finally, I'm hoping to present the data using a map in Tableau.
 There is a separate table for station data that includes the latitude and longitude of each that should be easy to read into a map.
 The user inputs all input variables above except for station ID.
 The tableau map is populated with one dot for each station.
-The station dots are the color graded with the results of the model: red for negative differential, white for zero, green for positive differential.
+The station dots are color graded with the results of the model: Red for negative differential, white for zero, green for positive differential.
+
+A Divvy employee could use this model in conjunction with the following additional information:
+	Current date/time
+	Current weather conditions
+	Bike capacity for each station
+	Live feed of number of bikes at each station, recorded every minute for example
+The model would be used in a dashboard to project:
+	For the current, in-progress time bucket, how does projected differential (assume differential spread uniformly across bucket) compare to actual?
+	Which stations, either in the current or [N] upcoming time buckets, are likely to:
+		Have [X] or fewer bikes (danger of running out) OR
+		Have [Y: function of station capacity] or more bikes (danger of filling up)
+Again, this could be shown on a map and used to set routes for Divvy trucks in real time as they move bikes between stations.
 
 
