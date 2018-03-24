@@ -1,0 +1,62 @@
+Divvy, Chicago's bike sharing system, faces the same operational challenges any bike-sharing system does.
+
+One of the primary challenges is bike distribution.
+There are two scenarios the system looks to avoid:
+	1. Station empty (users cannot rent bikes)
+	2. Station full (users cannot return bikes)
+
+To maintain proper bike distribution, Divvy employs a fleet of trucks to move bikes between stations as needed.
+Efficient utilization of these resources is critical to maintaining a cost-effective bike sharing system.
+
+Consider what happens over a period of time to any given Divvy station:
+	Every time a ride ends at the station, the station gains a bike (+1)
+	Every time a ride begins at the station, the station loses a bike (-1)
+Thus, the change in number of bikes at a station = [rides ending at the station] - [rides beginning at the station]
+I call this "bike differential".
+
+The model that I have created aims to predict the "bike differential" for a given station for a given period of time.
+
+There were two sources of data used:
+	Divvy provides information on the stations themselves and all rides ever taken
+		Beginning and ending station
+		Beginning and ending date and time
+	Weather data for Chicago was retrieved from NOAA
+		Daily "normals" based on averages over the 30-year period from 1981 – 2010
+		Hourly (or more frequent) weather reports for the entire period since Divvy went live
+
+After testing a variety of regression models, a "Random Forest" model was determined to do the best job of predicting bike differential.
+
+Divvy could use this model in conjunction with data it already has:
+	Model Inputs:	
+		Current date and time
+		Current weather
+		Forecasted weather
+	Other Inputs:	
+		Total bike capacity at each station
+		Live feed of number of bikes currently docked at each station
+Divvy takes the current number of bikes at each station and adds the projected bike differential for the next time period to calculate project number of bikes at the station.
+They could project multiple time periods ahead and add the projected differential for each period to the current number of bikes.
+
+If the projected number of bikes gets too close to zero or too close to the total capacity, it may need attention.
+Looking multiple periods ahead, Divvy could determine if the station is likely to stabilize on its own or whether they need to intervene.
+
+By putting these projections on a map, Divvy could plan its truck operations for the day.
+
+Going forward, there is more work to be done on the model:
+	More robust data cleanup
+		Consider stations that have been moved
+		Better cleanup of the weather reports data (the Normals are already quite clean)
+		Consider another source for weather data, such as Wunderground's API
+	More external data sources beyond weather
+		Example: Are stations around Wrigley Field impacted by whether there is a home Cubs game?
+		Example: Do holidays and other events like Lollapalooza affect ridership?
+	Continued work on model selection
+		Stations are so different from one another, is using the same model archetype across all of them correct?
+		Which variables should be used or eliminated?
+		Continue experiment with model parameters
+
+
+
+
+
+
